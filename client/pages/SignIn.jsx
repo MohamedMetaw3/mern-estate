@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  signInError,
+  signInStart,
+  signInSuccess,
+} from "../src/redux/user/userSlice";
 
+// Sign In functionality
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const { loading, error } = useSelector((state) => state.user);
+  const api = "http://localhost:3000/api";
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   // handelChange function to handle change events
   const handelChange = (e) => {
@@ -21,8 +29,8 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      setLoading(true);
-      const res = await fetch("/api/auth/signin", {
+      dispatch(signInStart());
+      const res = await fetch(`${api}/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,16 +39,13 @@ const SignIn = () => {
       });
       const data = await res.json();
       if (data?.success === false) {
-        setLoading(false);
-        setError(data?.message);
+        dispatch(signInError(data.message));
         return;
       }
-      setLoading(false);
-      setError(null);
+      dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      setLoading(false);
-      setError(error.message);
+      dispatch(signInError(error.message));
     }
   };
 
@@ -51,7 +56,6 @@ const SignIn = () => {
         onSubmit={handleSubmit}
         className="flex flex-col items-center  gap-4 "
       >
-      
         <input
           className="border border-slate-200 w-96 p-3 rounded-lg"
           type="email"
@@ -68,6 +72,7 @@ const SignIn = () => {
         />
       </form>
       <button
+        onClick={handleSubmit}
         disabled={loading}
         className="font-bold text-sm sm:text-lg w-96 bg-slate-700 text-white rounded-lg p-2 uppercase hover:opacity-80 disabled:opacity-70"
       >
@@ -75,9 +80,9 @@ const SignIn = () => {
       </button>
       <div className="">
         <p className="text-sm sm:text-lg w-96 text-center">
-          you have not  an account?
+          you have not an account?
           <Link to="/sign-up" className="text-blue-500">
-           sign up
+            sign up
           </Link>
         </p>
       </div>

@@ -6,6 +6,7 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+   const api = "http://localhost:3000/api";
 
   // handelChange function to handle change events
   const handelChange = (e) => {
@@ -22,7 +23,7 @@ const SignUp = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch(`${api}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -74,6 +75,7 @@ const SignUp = () => {
         />
       </form>
       <button
+      onClick={handleSubmit}
         disabled={loading}
         className="font-bold text-sm sm:text-lg w-96 bg-slate-700 text-white rounded-lg p-2 uppercase hover:opacity-80 disabled:opacity-70"
       >
