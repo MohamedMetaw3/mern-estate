@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({});
@@ -75,12 +76,13 @@ const SignUp = () => {
         />
       </form>
       <button
-      onClick={handleSubmit}
+        onClick={handleSubmit}
         disabled={loading}
         className="font-bold text-sm sm:text-lg w-96 bg-slate-700 text-white rounded-lg p-2 uppercase hover:opacity-80 disabled:opacity-70"
       >
         {loading ? "Loading...." : "Sign Up"}
       </button>
+      <OAuth />
       <div className="">
         <p className="text-sm sm:text-lg w-96 text-center">
           Already have an account?
@@ -89,6 +91,7 @@ const SignUp = () => {
           </Link>
         </p>
       </div>
+
       {error && (
         <p className="text-red-500 text-sm sm:text-lg w-96 text-center">
           {error}

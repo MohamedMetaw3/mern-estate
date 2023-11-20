@@ -6,11 +6,12 @@ import {
   signInStart,
   signInSuccess,
 } from "../src/redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 // Sign In functionality
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading , error } = useSelector((state) => state.user);
   const api = "http://localhost:3000/api";
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -78,6 +79,7 @@ const SignIn = () => {
       >
         {loading ? "Loading...." : "Sign In"}
       </button>
+      <OAuth />
       <div className="">
         <p className="text-sm sm:text-lg w-96 text-center">
           you have not an account?
@@ -86,6 +88,7 @@ const SignIn = () => {
           </Link>
         </p>
       </div>
+
       {error && (
         <p className="text-red-500 text-sm sm:text-lg w-96 text-center">
           {error}
