@@ -11,8 +11,10 @@ import OAuth from "../components/OAuth";
 // Sign In functionality
 const SignIn = () => {
   const [formData, setFormData] = useState({});
-  const { loading , error } = useSelector((state) => state.user);
-  const api = "http://localhost:3000/api";
+
+  const error = useSelector((state) => state.user);
+  const loading = useSelector((state) => state.user);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -31,22 +33,23 @@ const SignIn = () => {
     e.preventDefault();
     try {
       dispatch(signInStart());
-      const res = await fetch(`${api}/auth/signin`, {
+      const res = await fetch("http://localhost:3000/api/auth/signin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({formData}),
       });
       const data = await res.json();
       if (data?.success === false) {
-        dispatch(signInError(data.message));
+        dispatch(signInError(data?.message));
         return;
       }
       dispatch(signInSuccess(data));
       navigate("/");
     } catch (error) {
-      dispatch(signInError(error.message));
+      dispatch(signInError(error?.message));
     }
   };
 

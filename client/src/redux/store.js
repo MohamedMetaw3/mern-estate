@@ -4,7 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 // combine the reducers
-const rootReducer = combineReducers({
+export const rootReducer = combineReducers({
   user: userReducer,
 });
 

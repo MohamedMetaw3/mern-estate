@@ -5,6 +5,7 @@ import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
 dotenv.config();
 import cors from "cors";
+import bodyParser from "body-parser";
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -17,6 +18,7 @@ mongoose
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   res.send("Hello World");
