@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import cookieParser from "cookie-parser";
 dotenv.config();
 import cors from "cors";
 import bodyParser from "body-parser";
@@ -16,9 +17,10 @@ mongoose
     console.log(error);
   });
 const app = express();
+// Middlewares---->
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.get("/", (req, res) => {
   res.send("Hello World");
