@@ -7,27 +7,36 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import { useDispatch } from "react-redux";
+import {
+  updateUserError,
+  updateUserStart,
+  updateUserSuccess,
+} from "../src/redux/user/userSlice";
 import { app } from "../src/firebase";
 
+// Main Function -------->
 const Profile = () => {
   const currentUser = useSelector((state) => state?.user);
+  const error = useSelector((state) => state?.user);
+  const loading = useSelector((state) => state?.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [filePerc, setFilePerc] = useState(0);
   const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
   const [fileUploadError, setFileUploadError] = useState(false);
-  console.log(formData);
+  const dispatch = useDispatch();
 
+  // clg---->
+  console.log(formData);
   console.log(filePerc);
   console.log(file);
 
   useEffect(() => {
-
-
     if (file) {
-     
       setFile(file);
-      ()=> handleFileUpload(file);
+      () => handleFileUpload(file);
     }
   }, [file]);
 
@@ -56,12 +65,48 @@ const Profile = () => {
       }
     );
   };
+  // Handel Change function
+  const handleChange = (e) => {
+    e.preventDefault();
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
+  };
+  // handleSubmit-------->
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/api/user/update${currentUser?._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data?.success === false) {
+        dispatch(updateUserError(data?.message));
+
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserError(error.message));
+    }
+  };
 
   return (
     <div>
       <h1 className=" text-center my-7 font-bold text-3xl">Profile</h1>
 
-      <form className="flex flex-col items-center  mx-auto py-7 gap-4">
+      <form
+        onSubmit={handleSubmit}
+        className="flex flex-col items-center  mx-auto py-7 gap-4"
+      >
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type="file"
@@ -95,21 +140,30 @@ const Profile = () => {
           className="w-96 p-3 rounded-lg  "
           type="username"
           placeholder="your username"
+          defaultValue={currentUser?.username}
+          onChange={() => handleChange}
         />
         <input
           id="emai"
           className="w-96 p-3 rounded-lg  "
           type="email"
           placeholder="your Email"
+          defaultValue={currentUser?.email}
+          onChange={() => handleChange}
         />
         <input
           id="password"
           className="w-96 p-3 rounded-lg  "
           type="password"
           placeholder="your password"
+          defaultValue={currentUser?.password}
+          onChange={() => handleChange}
         />
-        <button className="bg-blue-700 uppercase w-96 hover:opacity-70 text-white rounded-lg p-3">
-          update
+        <button
+          disabled={loading}
+          className="bg-blue-700 uppercase w-96 hover:opacity-70 text-white rounded-lg p-3"
+        >
+          {loading ? "Loading...." : "Update"}
         </button>
         <button className="bg-green-700 uppercase w-96 hover:opacity-70 text-white rounded-lg p-3">
           create listing
@@ -123,6 +177,16 @@ const Profile = () => {
           sign out
         </span>
       </div>
+      {error && (
+        <p className="text-red-500 text-sm sm:text-lg w-96 text-center">
+          {error}
+        </p>
+      )}
+      {updateSuccess && (
+        <p className="text-green-500 text-sm sm:text-lg w-96 text-center">
+          success
+        </p>
+      )}
     </div>
   );
 };

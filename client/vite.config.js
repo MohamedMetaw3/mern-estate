@@ -7,9 +7,22 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://localhost:3000/api",
-        secure: false,
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
         ws: true,
+        secure: false,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+          "Access-Control-Allow-Headers":
+          "X-Requested-With, content-type, Authorization",
+          "Access-Control-Allow-Credentials": "true",
+          
+        },
+
+
+        
       },
     },
   },

@@ -8,21 +8,31 @@ export const test = (req, res) => {
 };
 
 export const updateUser = async (req, res, next) => {
-  if (req.user.id !== req.params.id) return next(errorHandler(401, "Invalid"));
+  if (req.user.id !== req.params.id)
+    return next(
+      errorHandler(
+        401,
+        "you can only update a user with this id in the database if the user already exists and has permission   to update it."
+      )
+    );
   try {
     if (req.body.password) {
       req.body.password = bycryptjs.hashSync(req.body.password, 10);
     }
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      $set: {
-        username: req.body.username,
-        email: req.body.email,
-        password: req.body.password,
-        avatar: req.body.avatar,       
+    const user = await User.findByIdAndUpdate(
+      req.params.id,
 
-      }
-    },{new:true});
-    const {password,...rest}=updateUser._doc
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          password: req.body.password,
+          avatar: req.body.avatar,
+        },
+      },
+      { new: true }
+    );
+    const { password, ...rest } = updateUser._doc;
     res.status(200).json(rest);
   } catch (error) {
     next(error);

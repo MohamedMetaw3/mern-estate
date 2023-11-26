@@ -7,7 +7,6 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-   const api = "http://localhost:3000/api";
 
   // handelChange function to handle change events
   const handelChange = (e) => {
@@ -24,10 +23,11 @@ const SignUp = () => {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await fetch(`${api}/auth/signup`, {
+      const res = await fetch("http://3000/api/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          
         },
         body: JSON.stringify(formData),
       });
