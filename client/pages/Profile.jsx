@@ -15,6 +15,7 @@ import {
   deleteUserStart,
   deleteUserError,
   deleteUserSuccess,
+  signOutUserStart,
 } from "../src/redux/user/userSlice";
 import { app } from "../src/firebase";
 
@@ -101,7 +102,7 @@ const Profile = () => {
       dispatch(updateUserError(error.message));
     }
   };
-// handle Delete user function---------->
+  // handle Delete user function---------->
   const handleDeleteUser = async (e) => {
     e.preventDefault();
     try {
@@ -123,6 +124,22 @@ const Profile = () => {
       setUpdateSuccess(true);
     } catch (error) {
       dispatch(updateUserError(error?.message));
+    }
+  };
+  // handleSignOut --------->
+  const handleSignOut = async () => {
+    dispatch(signOutUserStart());
+    try {
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      if (data?.success === false) {
+        dispatch(deleteUserError(data?.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+    } catch (error) {
+      // eslint-disable-next-line no-undef
+      dispatch(deleteUserError(data?.message));
     }
   };
   return (
@@ -196,10 +213,16 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mx-2 ">
-        <span onClick={handleDeleteUser} className="font-bold cursor-pointer text-red-500 text-lg uppercase">
-        Delete  account
+        <span
+          onClick={handleDeleteUser}
+          className="font-bold cursor-pointer text-red-500 text-lg uppercase"
+        >
+          Delete account
         </span>
-        <span className="font-bold cursor-pointer text-red-500 text-lg uppercase">
+        <span
+          onClick={handleSignOut}
+          className="font-bold cursor-pointer text-red-500 text-lg uppercase"
+        >
           sign out
         </span>
       </div>

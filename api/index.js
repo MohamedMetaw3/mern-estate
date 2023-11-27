@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
+import listingRouter from "./routes/listing.route.js";
 import cookieParser from "cookie-parser";
 dotenv.config();
 import cors from "cors";
-import bodyParser from "body-parser";
 
 mongoose
   .connect(process.env.MONGO_URL)
@@ -30,9 +30,10 @@ app.listen(3000, () => {
   console.log("Server is running  on 3000");
 });
 
-// routes
+// ------- routes -------->
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/listing", listingRouter);
 
 // Error Middleware Handler
 app.use((err, req, res, next) => {
