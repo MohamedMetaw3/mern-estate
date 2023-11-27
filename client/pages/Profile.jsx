@@ -12,6 +12,9 @@ import {
   updateUserError,
   updateUserStart,
   updateUserSuccess,
+  deleteUserStart,
+  deleteUserError,
+  deleteUserSuccess,
 } from "../src/redux/user/userSlice";
 import { app } from "../src/firebase";
 
@@ -98,7 +101,30 @@ const Profile = () => {
       dispatch(updateUserError(error.message));
     }
   };
+// handle Delete user function---------->
+  const handleDeleteUser = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete${currentUser?._id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data?.success === false) {
+        dispatch(deleteUserError(data?.message));
 
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+      setUpdateSuccess(true);
+    } catch (error) {
+      dispatch(updateUserError(error?.message));
+    }
+  };
   return (
     <div>
       <h1 className=" text-center my-7 font-bold text-3xl">Profile</h1>
@@ -170,8 +196,8 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mx-2 ">
-        <span className="font-bold cursor-pointer text-red-500 text-lg uppercase">
-          account
+        <span onClick={handleDeleteUser} className="font-bold cursor-pointer text-red-500 text-lg uppercase">
+        Delete  account
         </span>
         <span className="font-bold cursor-pointer text-red-500 text-lg uppercase">
           sign out
